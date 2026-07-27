@@ -16,17 +16,20 @@
     --ink:#4a3720;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
-  html,body{height:100%;overflow:hidden;}
+  html{height:100%;}
+  body{height:100%;overflow:hidden;}   /* desktop: #fit (fixed) handles scroll */
   body{
     font-family:'Prompt','Sarabun',system-ui,-apple-system,sans-serif;color:var(--ink);
     background:
       radial-gradient(1200px 600px at 50% -10%, #eaf6dd 0%, rgba(234,246,221,0) 60%),
       linear-gradient(180deg,#eef8de 0%, #e3f0cf 55%, #d9ead9 100%);
   }
-  /* 16:9 fit-to-screen — centered when it fits, scrollable (ทุกทิศ) when it doesn't */
-  #fit{position:fixed;inset:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;}
+  /* 16:9 fit-to-screen — centered when it fits, scrollable ทุกทิศ when it doesn't.
+     grid + margin:auto centers when it fits AND stays fully scroll-reachable when it overflows
+     (works in every browser, unlike flex "safe center"). */
+  #fit{position:fixed;inset:0;overflow:auto;display:grid;}
   #stage{
-    width:1280px;height:720px;flex:none;
+    width:1280px;height:720px;flex:none;margin:auto;
     display:grid;grid-template-columns:454px 1fr;gap:18px;padding:18px;
     transform-origin:center center;
   }
