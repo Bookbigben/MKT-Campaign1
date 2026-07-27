@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pawdy · รวมอาย ส่งต่อความอิ่ม</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-d:#3f7a2e; --green:#5a9a35; --green-l:#8dc63f;
+    --cream:#fbf3df; --cream-d:#f1e3bf;
+    --brown:#7a5230; --brown-d:#5b3c22;
+    --gold:#f0a93e; --gold-l:#ffd98a; --gold-d:#c9781f;
+    --ink:#4a3720;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0;}
+  html,body{height:100%;overflow:hidden;}
+  body{
+    font-family:'Prompt','Sarabun',system-ui,-apple-system,sans-serif;color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #eaf6dd 0%, rgba(234,246,221,0) 60%),
+      linear-gradient(180deg,#eef8de 0%, #e3f0cf 55%, #d9ead9 100%);
+  }
+  /* 16:9 fit-to-screen */
+  #fit{position:fixed;inset:0;display:grid;place-items:center;}
+  #stage{
+    width:1280px;height:720px;flex:none;
+    display:grid;grid-template-columns:454px 1fr;gap:18px;padding:18px;
+    transform-origin:center center;
+  }
+  .panel{background:#fff;border:2px solid var(--cream-d);border-radius:22px;
+    box-shadow:0 14px 30px -18px rgba(120,80,30,.5);}
+
+  /* LEFT */
+  .left{display:flex;flex-direction:column;gap:14px;min-height:0;}
+  .banner{flex:1 1 auto;min-height:0;overflow:hidden;background:#fff;display:flex;}
+  .banner img{width:100%;height:100%;object-fit:contain;display:block;}
+  .kpi{
+    flex:none;background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 100%);
+    border-radius:22px;padding:16px 20px;color:#fff;text-align:center;position:relative;overflow:hidden;
+    box-shadow:0 14px 28px -14px rgba(60,110,40,.6);
+  }
+  .kpi::after{content:"🐾";position:absolute;right:-4px;bottom:-16px;font-size:96px;opacity:.10;transform:rotate(-15deg);}
+  .kpi .label{font-size:16px;font-weight:600;opacity:.96;}
+  .kpi .kg{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:2px;}
+  .kpi .kg b{font-size:52px;font-weight:800;line-height:1;text-shadow:0 3px 0 rgba(0,0,0,.10);}
+  .kpi .kg span{font-size:20px;font-weight:700;}
+  .kpi .sub{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .chip{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);
+    padding:6px 12px;border-radius:999px;font-size:13.5px;font-weight:600;}
+  .chip b{font-weight:800;}
+  .status{flex:none;text-align:center;color:#7c6b4c;font-size:12px;font-weight:500;line-height:1.4;}
+  .status button{font-family:inherit;border:none;cursor:pointer;background:var(--green);color:#fff;
+    font-weight:700;padding:5px 14px;border-radius:999px;margin-left:6px;font-size:12px;}
+  .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green-l);margin-right:5px;animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.35;}50%{opacity:1;}}
+
+  /* RIGHT */
+  .right{display:flex;flex-direction:column;gap:10px;min-height:0;}
+  .sec-title{display:flex;align-items:center;justify-content:center;flex:none;}
+  .sec-title span{background:var(--green);color:#fff;padding:5px 20px;border-radius:999px;
+    font-weight:800;font-size:17px;box-shadow:0 6px 14px -6px rgba(60,110,40,.7);}
+
+  .hero{flex:1 1 auto;min-height:0;background:var(--cream);border:2px solid var(--cream-d);border-radius:22px;
+    display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:10px;padding:12px 20px;position:relative;overflow:hidden;
+    box-shadow:0 14px 30px -20px rgba(120,80,30,.5);}
+  .hero .bamboo{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(circle at 10% 18%,rgba(141,198,63,.13) 0 12px,transparent 13px),
+      radial-gradient(circle at 92% 78%,rgba(141,198,63,.13) 0 16px,transparent 17px);}
+  .hero .stageAni{height:100%;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;}
+  .animal-big{height:92%;aspect-ratio:1/1;}
+  .hero .info{position:relative;z-index:1;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;}
+  .age-tab{background:linear-gradient(135deg,var(--gold-l),var(--gold));color:var(--brown-d);
+    padding:12px 26px;border-radius:18px;border:2px solid #fff;box-shadow:0 10px 20px -10px rgba(201,120,31,.7);}
+  .age-tab small{display:block;font-size:13px;font-weight:600;opacity:.85;}
+  .age-tab b{font-size:46px;font-weight:800;line-height:1.05;}
+  .age-tab b i{font-size:.45em;font-style:normal;font-weight:700;}
+  .milestone{width:100%;max-width:320px;}
+  .milestone .mtxt{font-size:14px;font-weight:600;color:var(--brown);margin-bottom:6px;}
+  .bar{height:16px;border-radius:999px;background:#e7d7b4;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.12);}
+  .bar>i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--green-l),var(--green));transition:width 1.6s cubic-bezier(.22,1,.36,1);}
+  .empty-note{color:#9a8a6c;font-weight:600;font-size:13.5px;}
+
+  .grid{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;height:246px;}
+  .mini{background:#fff;border:2px solid var(--cream-d);border-radius:20px;padding:10px 8px 12px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;box-shadow:0 12px 24px -18px rgba(120,80,30,.5);min-height:0;}
+  .mini h3{font-size:16px;font-weight:700;color:var(--brown-d);margin-bottom:4px;flex:none;}
+  .mini .animal-sm{flex:1 1 auto;min-height:0;width:100%;}
+  .mini .nums{flex:none;margin-top:4px;}
+  .mini .nums .big{font-size:26px;font-weight:800;color:var(--gold-d);line-height:1;}
+  .mini .nums .big i{font-size:.5em;font-style:normal;font-weight:700;color:var(--brown);}
+  .mini .nums .cnt{font-size:12.5px;font-weight:600;color:#8a7a5e;margin-top:1px;}
+  .mini .kgtag{flex:none;margin-top:5px;font-size:11.5px;font-weight:700;color:var(--green-d);background:#eaf6dd;padding:3px 10px;border-radius:999px;}
+
+  /* image fill component */
+  .ani{position:relative;width:100%;height:100%;}
+  .ani img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;}
+  .ani .base{filter:grayscale(1);opacity:.24;}
+  .ani .fill{clip-path:inset(100% 0 0 0);transition:clip-path 1.7s cubic-bezier(.22,1,.36,1);will-change:clip-path;
+    filter:drop-shadow(0 6px 6px rgba(120,80,30,.18));}
+  .ani.bob{animation:bob 3.6s ease-in-out infinite;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-.5deg);}50%{transform:translateY(-8px) rotate(.5deg);}}
+
+  #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(160%);
+    background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;padding:12px 22px;border-radius:999px;
+    font-weight:800;font-size:15px;box-shadow:0 16px 34px -12px rgba(201,120,31,.8);z-index:50;border:2px solid #fff;
+    transition:transform .6s cubic-bezier(.22,1.4,.36,1);}
+  #toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="panel banner"><img src="pawdy_banner.jpg" alt="Pawdy รวมอาย ส่งต่อความอิ่ม"></div>
+    <div class="kpi">
+      <div class="label">🍚 ส่งต่ออาหารให้น้องจรแล้ว</div>
+      <div class="kg"><b id="kgNum">0.00</b><span>กิโลกรัม</span></div>
+      <div class="sub">
+        <div class="chip">อายุรวม <b id="ageChip">0</b> ปี</div>
+        <div class="chip">ผู้ร่วมส่งต่อ <b id="cntChip">0</b> ท่าน</div>
+        <div class="chip">100 ปี = 1 กก.</div>
+      </div>
+    </div>
+    <div class="status"><span class="dot"></span><span id="statusTxt">กำลังเชื่อมต่อ Google Sheet…</span>
+      <button id="refreshBtn">รีเฟรช</button></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="sec-title"><span>🐾 อายุรวมของน้องทุกตัว</span></div>
+    <div class="hero">
+      <div class="bamboo"></div>
+      <div class="stageAni"><div id="bigAnimal" class="animal-big"></div></div>
+      <div class="info">
+        <div class="age-tab"><small>รวมอายุทุกน้องที่ส่งเข้ามา</small><b id="bigAge">0 <i>ปี</i></b></div>
+        <div class="milestone">
+          <div class="mtxt">อีก <b id="toNext">100</b> ปี ครบ <b>1 กิโลกรัม</b> ถัดไป 🎯</div>
+          <div class="bar"><i id="mBar" style="width:0%"></i></div>
+        </div>
+        <div class="empty-note" id="emptyNote" style="display:none">รอเจ้านายคนแรกมาบอกอายุน้อง ๆ 🐾</div>
+      </div>
+    </div>
+
+    <div class="sec-title"><span>แยกตามชนิดของน้อง</span></div>
+    <div class="grid">
+      <div class="mini">
+        <h3>🐶 น้องหมา</h3>
+        <div id="dogAnimal" class="animal-sm"></div>
+        <div class="nums"><div class="big" id="dogAge">0 <i>ปี</i></div><div class="cnt" id="dogCnt">0 ตัว</div></div>
+        <div class="kgtag" id="dogKg">≈ 0.00 กก.</div>
+      </div>
+      <div class="mini">
+        <h3>🐱 น้องแมว</h3>
+        <div id="catAnimal" class="animal-sm"></div>
+        <div class="nums"><div class="big" id="catAge">0 <i>ปี</i></div><div class="cnt" id="catCnt">0 ตัว</div></div>
+        <div class="kgtag" id="catKg">≈ 0.00 กก.</div>
+      </div>
+      <div class="mini">
+        <h3>🐹 น้องอื่น ๆ</h3>
+        <div id="otherAnimal" class="animal-sm"></div>
+        <div class="nums"><div class="big" id="otherAge">0 <i>ปี</i></div><div class="cnt" id="otherCnt">0 ตัว</div></div>
+        <div class="kgtag" id="otherKg">≈ 0.00 กก.</div>
+      </div>
+    </div>
+  </div>
+
+</div></div>
+<div id="toast">🎉 ครบอีก 1 กิโลกรัม!</div>
+
+<script>
+const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vRhnv7yfGpVxs6_W_iK46Nwv16qoSl0MaVgOxazYNso3c1_MA92OCcTJHODU2_BnlAQvrCpcrFIe4qP/pub?output=csv";
+const POLL_MS=20000;
+const IMG={dog:'dog.png',cat:'cat.png',other:'hamster.png'};
+
+/* fit stage to window (keep whole 16:9 visible) */
+const stage=document.getElementById('stage');
+function fit(){const s=Math.min(innerWidth/1280,innerHeight/720);stage.style.transform='scale('+s+')';}
+addEventListener('resize',fit);fit();
+
+/* CSV parse */
+function parseCSV(text){const rows=[];let row=[],cur="",q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){cur+='"';i++;}else q=false;}else cur+=c;}
+    else{if(c==='"')q=true;else if(c===','){row.push(cur);cur="";}
+      else if(c==='\n'){row.push(cur);rows.push(row);row=[];cur="";}else if(c==='\r'){}else cur+=c;}}
+  if(cur.length||row.length){row.push(cur);rows.push(row);}
+  return rows.filter(r=>r.some(c=>c.trim()!==""));}
+function catOf(t){const s=(t||"").toLowerCase();
+  if(/หมา|สุนัข|dog|🐶|🐕/.test(s))return"dog";
+  if(/แมว|เหมียว|cat|🐱|🐈/.test(s))return"cat";return"other";}
+
+/* image fill */
+function buildImg(el,type,bob){
+  el.innerHTML='<div class="ani '+(bob?'bob':'')+'"><img class="base" src="'+IMG[type]+'"><img class="fill" data-fill src="'+IMG[type]+'"></div>';
+  return el.querySelector('[data-fill]');
+}
+function setFill(node,level){level=Math.max(0,Math.min(1,level));
+  node.style.clipPath='inset('+((1-level)*100).toFixed(2)+'% 0 0 0)';}
+
+function animateNum(el,to,fmt,dur=1400){
+  const from=parseFloat(el.dataset.v||"0")||0;const t0=performance.now();
+  function step(t){const p=Math.min(1,(t-t0)/dur);const e=1-Math.pow(1-p,3);fmt(from+(to-from)*e);
+    if(p<1)requestAnimationFrame(step);else{el.dataset.v=to;fmt(to);}}
+  requestAnimationFrame(step);}
+
+const R={kg:document.getElementById('kgNum'),ageChip:document.getElementById('ageChip'),cntChip:document.getElementById('cntChip'),
+  bigAge:document.getElementById('bigAge'),toNext:document.getElementById('toNext'),mBar:document.getElementById('mBar'),
+  emptyNote:document.getElementById('emptyNote'),statusTxt:document.getElementById('statusTxt'),
+  dogAge:document.getElementById('dogAge'),dogCnt:document.getElementById('dogCnt'),dogKg:document.getElementById('dogKg'),
+  catAge:document.getElementById('catAge'),catCnt:document.getElementById('catCnt'),catKg:document.getElementById('catKg'),
+  otherAge:document.getElementById('otherAge'),otherCnt:document.getElementById('otherCnt'),otherKg:document.getElementById('otherKg')};
+const fills={
+  big:buildImg(document.getElementById('bigAnimal'),'dog',true),
+  dog:buildImg(document.getElementById('dogAnimal'),'dog',false),
+  cat:buildImg(document.getElementById('catAnimal'),'cat',false),
+  other:buildImg(document.getElementById('otherAnimal'),'other',false)};
+
+const nf=n=>Math.round(n).toLocaleString('en-US');
+const kf=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+function levelOf(age){return age<=0?0:((age%100)||100)/100;}
+let prevKgWhole=null;
+
+function render(d){
+  const total=d.total,kg=total/100;
+  R.emptyNote.style.display=d.count>0?'none':'block';
+  animateNum(R.kg,kg,v=>R.kg.textContent=kf(v));
+  animateNum(R.ageChip,total,v=>R.ageChip.textContent=nf(v));
+  animateNum(R.cntChip,d.count,v=>R.cntChip.textContent=nf(v));
+  animateNum(R.bigAge,total,v=>R.bigAge.innerHTML=nf(v)+' <i>ปี</i>');
+  const rem=total<=0?100:(total%100===0?0:100-(total%100));
+  R.toNext.textContent=nf(rem);
+  R.mBar.style.width=(levelOf(total)*100).toFixed(1)+'%';
+  setFill(fills.big,levelOf(total));
+  for(const [k,g] of [['dog',d.dog],['cat',d.cat],['other',d.other]]){
+    animateNum(R[k+'Age'],g.age,v=>R[k+'Age'].innerHTML=nf(v)+' <i>ปี</i>');
+    R[k+'Cnt'].textContent=nf(g.count)+' ตัว';
+    R[k+'Kg'].textContent='≈ '+kf(g.age/100)+' กก.';
+    setFill(fills[k],levelOf(g.age));
+  }
+  const whole=Math.floor(kg);
+  if(prevKgWhole!==null&&whole>prevKgWhole)toast('🎉 ครบอีก 1 กิโลกรัม! ขอบคุณทุกน้อง');
+  prevKgWhole=whole;
+  const now=new Date();
+  R.statusTxt.textContent='อัปเดตล่าสุด '+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit',second:'2-digit'})+' · รวม '+nf(d.count)+' รายการ';
+}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');
+  clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),4200);}
+
+let hasLoaded=false;
+async function fetchCSV(){let lastErr;
+  for(let a=0;a<3;a++){try{const r=await fetch(CSV_URL+'&_t='+Date.now(),{cache:'no-store'});
+    if(!r.ok)throw new Error('HTTP '+r.status);return await r.text();}
+    catch(e){lastErr=e;await new Promise(x=>setTimeout(x,900*(a+1)));}}
+  throw lastErr;}
+function blank(){return{total:0,count:0,dog:{age:0,count:0},cat:{age:0,count:0},other:{age:0,count:0}};}
+async function load(){
+  try{
+    const txt=await fetchCSV();const rows=parseCSV(txt);
+    if(!rows.length){render(blank());hasLoaded=true;return;}
+    const header=rows[0].map(h=>h.trim());
+    let ageIdx=header.findIndex(h=>/อายุ/.test(h));let typeIdx=header.findIndex(h=>/ประเภท|ชนิด/.test(h));
+    if(ageIdx<0)ageIdx=4;if(typeIdx<0)typeIdx=3;
+    const agg=blank();
+    for(let i=1;i<rows.length;i++){const r=rows[i];
+      const age=parseFloat((r[ageIdx]||'').replace(/[^\d.]/g,''));if(!isFinite(age)||age<=0)continue;
+      const c=catOf(r[typeIdx]);agg[c].age+=age;agg[c].count++;agg.total+=age;agg.count++;}
+    render(agg);hasLoaded=true;
+  }catch(e){
+    if(!hasLoaded)R.statusTxt.innerHTML='⚠️ ยังเชื่อมต่อชีทไม่ได้ — โปรดเปิดไฟล์ด้วย <b>Google Chrome</b> และต่ออินเทอร์เน็ต แล้วกดรีเฟรช';
+    else R.statusTxt.textContent='เครือข่ายสะดุดชั่วคราว · แสดงข้อมูลล่าสุด · ลองใหม่อัตโนมัติ';
+  }
+}
+document.getElementById('refreshBtn').addEventListener('click',load);
+load();setInterval(load,POLL_MS);
+</script>
+</body>
+</html>
