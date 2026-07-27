@@ -23,8 +23,8 @@
       radial-gradient(1200px 600px at 50% -10%, #eaf6dd 0%, rgba(234,246,221,0) 60%),
       linear-gradient(180deg,#eef8de 0%, #e3f0cf 55%, #d9ead9 100%);
   }
-  /* 16:9 fit-to-screen */
-  #fit{position:fixed;inset:0;display:grid;place-items:center;}
+  /* 16:9 fit-to-screen — centered when it fits, scrollable (ทุกทิศ) when it doesn't */
+  #fit{position:fixed;inset:0;overflow:auto;display:flex;align-items:safe center;justify-content:safe center;}
   #stage{
     width:1280px;height:720px;flex:none;
     display:grid;grid-template-columns:454px 1fr;gap:18px;padding:18px;
@@ -214,10 +214,11 @@ const IMG={dog:'dog.png',cat:'cat.png',other:'hamster.png'};
 /* fit stage to window (desktop 16:9, with top/bottom safe margin) + view toggle */
 const stage=document.getElementById('stage');
 function fit(){
-  if(document.body.classList.contains('mode-mobile'))return;
-  // *0.9 leaves ~5% safe margin on every side so it never gets cut off on any device
+  if(document.body.classList.contains('mode-mobile')){stage.style.zoom='';return;}
+  // fit whole 16:9 with ~5% margin. Uses zoom (not transform) so that if it ever
+  // overflows on an odd screen, the user can scroll up/down/left/right to the hidden part.
   const s=Math.min(innerWidth/1280,innerHeight/720)*0.9;
-  stage.style.transform='scale('+Math.max(s,0.1)+')';
+  stage.style.zoom=String(Math.max(s,0.12));
 }
 function setView(v){
   const mobile=(v==='mobile');
@@ -226,7 +227,7 @@ function setView(v){
   document.getElementById('btnDesktop').classList.toggle('on',!mobile);
   document.getElementById('btnMobile').classList.toggle('on',mobile);
   try{localStorage.setItem('pawdyView',v);}catch(e){}
-  if(!mobile)fit();
+  if(mobile){stage.style.zoom='';scrollTo(0,0);} else fit();
 }
 document.getElementById('btnDesktop').onclick=()=>setView('desktop');
 document.getElementById('btnMobile').onclick=()=>setView('mobile');
