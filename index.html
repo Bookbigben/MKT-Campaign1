@@ -111,21 +111,28 @@
     font-weight:700;font-size:13px;padding:6px 12px;border-radius:999px;line-height:1;}
   #viewToggle button.on{background:var(--green);color:#fff;box-shadow:0 4px 10px -4px rgba(60,110,40,.7);}
 
-  /* ===== MOBILE MODE (แนวตั้ง เลื่อนได้) ===== */
+  /* ===== MOBILE MODE (แนวตั้ง เรียงลงมา เลื่อนได้) ===== */
   body.mode-mobile{overflow:auto;height:auto;}
-  body.mode-mobile #fit{position:static;display:block;height:auto;min-height:100%;padding:56px 10px 30px;}
-  body.mode-mobile #stage{width:100%;height:auto;transform:none!important;display:flex;flex-direction:column;
-    grid-template-columns:none;gap:14px;padding:0;}
+  body.mode-mobile #fit{position:static;display:block;height:auto;min-height:100%;padding:56px 14px 40px;}
+  body.mode-mobile #stage{width:100%;max-width:520px;margin:0 auto;height:auto;transform:none!important;
+    display:flex;flex-direction:column;grid-template-columns:none;gap:14px;padding:0;}
   body.mode-mobile .left,body.mode-mobile .right{display:flex;flex-direction:column;gap:14px;}
   body.mode-mobile .banner,body.mode-mobile .kpi,body.mode-mobile .hero,
   body.mode-mobile .grid,body.mode-mobile .sec-title,body.mode-mobile .status{flex:none;}
-  body.mode-mobile .banner{max-height:46vh;}
-  body.mode-mobile .banner img{max-height:46vh;}
+  body.mode-mobile .banner{max-height:36vh;}
+  body.mode-mobile .banner img{max-height:36vh;}
+  /* big "all pets" dog */
   body.mode-mobile .hero{grid-template-columns:1fr;justify-items:center;padding:18px 16px;gap:14px;}
-  body.mode-mobile .hero .stageAni{height:auto;}
-  body.mode-mobile .animal-big{height:auto;width:60%;max-width:230px;}
-  body.mode-mobile .grid{height:auto;}
-  body.mode-mobile .mini .animal-sm{height:104px;flex:none;}
+  body.mode-mobile .hero .stageAni{height:auto;width:100%;}
+  body.mode-mobile .animal-big{height:auto;width:64%;max-width:230px;}
+  /* breakdown: หมา / แมว / อื่นๆ — one big card per row, stacked downward */
+  body.mode-mobile .grid{grid-template-columns:1fr;height:auto;gap:14px;}
+  body.mode-mobile .mini{padding:16px 16px 18px;}
+  body.mode-mobile .mini h3{font-size:19px;margin-bottom:6px;}
+  body.mode-mobile .mini .animal-sm{height:160px;flex:none;}
+  body.mode-mobile .mini .nums .big{font-size:32px;}
+  body.mode-mobile .mini .nums .cnt{font-size:14px;}
+  body.mode-mobile .mini .kgtag{font-size:13px;margin-top:7px;}
 
   #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(160%);
     background:linear-gradient(135deg,var(--gold),var(--gold-d));color:#fff;padding:12px 22px;border-radius:999px;
@@ -208,7 +215,8 @@ const IMG={dog:'dog.png',cat:'cat.png',other:'hamster.png'};
 const stage=document.getElementById('stage');
 function fit(){
   if(document.body.classList.contains('mode-mobile'))return;
-  const s=Math.min((innerWidth-24)/1280,(innerHeight-44)/720);
+  // *0.9 leaves ~5% safe margin on every side so it never gets cut off on any device
+  const s=Math.min(innerWidth/1280,innerHeight/720)*0.9;
   stage.style.transform='scale('+Math.max(s,0.1)+')';
 }
 function setView(v){
